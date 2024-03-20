@@ -22,7 +22,7 @@ public:
 
     int width, height;
 
-    Eigen::Vector3f getColor(float u, float v)
+    Eigen::Vector3f getColor(float u, float v)  
     {
         auto u_img = u * width;
         auto v_img = (1 - v) * height;
