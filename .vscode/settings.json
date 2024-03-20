@@ -56,6 +56,8 @@
         "thread": "cpp",
         "cinttypes": "cpp",
         "typeinfo": "cpp",
-        "bit": "cpp"
-    }
+        "bit": "cpp",
+        "core": "cpp"
+    },
+    "cmake.sourceDirectory": "/home/vv123/GAMES101_Homework_S2021/GAMES101_Homework3_S2021/Homework3/Assignment3"
 }
