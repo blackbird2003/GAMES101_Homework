@@ -106,4 +106,45 @@ Intersection BVHAccel::getIntersection(BVHBuildNode* node, const Ray& ray) const
 {
     // TODO Traverse the BVH to find intersection
 
+    /*
+    struct BVHBuildNode {
+        Bounds3 bounds;
+        BVHBuildNode *left;
+        BVHBuildNode *right;
+        Object* object;
+
+    public:
+        int splitAxis=0, firstPrimOffset=0, nPrimitives=0;
+        // BVHBuildNode Public Methods
+        BVHBuildNode(){
+            bounds = Bounds3();
+            left = nullptr;right = nullptr;
+            object = nullptr;
+        }
+    };
+    */
+
+   /*
+    inline bool Bounds3::IntersectP(const Ray& ray, const Vector3f& invDir,
+                                    const std::array<int, 3>& dirIsNeg) const
+    {
+        // invDir: ray direction(x,y,z), invDir=(1.0/x,1.0/y,1.0/z), 
+        // use this because Multiply is faster that Division
+        // dirIsNeg: ray direction(x,y,z), dirIsNeg=[int(x>0),int(y>0),int(z>0)], 
+        // use this to simplify your logic
+   */
+    bool isinter = node->bounds.IntersectP(ray, 
+    {1.0/ray.direction.x, 1.0/ray.direction.y, 1.0/ray.direction.z}, 
+    {ray.direction.x > 0, ray.direction.y > 0, ray.direction.z > 0});
+
+    Intersection inter_null;
+    if (!isinter) return inter_null;
+
+    if (!node->left && !node->right) {
+        return node->object->getIntersection(ray);
+    } 
+
+    Intersection inter_l = getIntersection(node->left, ray);
+    Intersection inter_r = getIntersection(node->right, ray);
+    return inter_l.distance < inter_r.distance ? inter_l : inter_r;
 }

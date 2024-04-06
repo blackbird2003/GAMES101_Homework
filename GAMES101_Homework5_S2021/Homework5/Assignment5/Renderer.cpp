@@ -228,9 +228,24 @@ void Renderer::Render(const Scene& scene)
             // TODO: Find the x and y positions of the current pixel to get the direction
             // vector that passes through it.
             // Also, don't forget to multiply both of them with the variable *scale*, and
-            // x (horizontal) variable with the *imageAspectRatio*            
+            // x (horizontal) variable with the *imageAspectRatio*   
+
+            //(i,j) on the screen -> vector3f dir() of light
+            //since eyepos is (0,0,0), just calculate the world coordinate
+            //from Vector3f dir = Vector3f(x, y, -1);
+            //we can know the screen is "in front of" eye, by z = 1
+            //and we suppose that the light that cross the centre of screen is (0,0,-1)
+            x = (i + 0.5) / scene.width;
+            y = (j + 0.5) / scene.height;
+            //[0, 1] -> [-1, 1]
+            x = x * 2 - 1; y = y * 2 - 1;
+            y = -y; // as screen coordinate start from top left
+
+            x *= scale * imageAspectRatio; 
+            y *= scale;
 
             Vector3f dir = Vector3f(x, y, -1); // Don't forget to normalize this direction!
+            dir = normalize(dir);
             framebuffer[m++] = castRay(eye_pos, dir, scene, 0);
         }
         UpdateProgress(j / (float)scene.height);

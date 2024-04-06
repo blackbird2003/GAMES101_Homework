@@ -9,6 +9,8 @@
 #include <cassert>
 #include <array>
 
+#define eps 1e-6
+
 bool rayTriangleIntersect(const Vector3f& v0, const Vector3f& v1,
                           const Vector3f& v2, const Vector3f& orig,
                           const Vector3f& dir, float& tnear, float& u, float& v)
@@ -231,11 +233,29 @@ inline Intersection Triangle::getIntersection(Ray ray)
         return inter;
     t_tmp = dotProduct(e2, qvec) * det_inv;
 
+    
+    
+    //Definiation of Struct Intersection
+    /*
+    Intersection(){
+        happened=false;
+        coords=Vector3f();
+        normal=Vector3f();
+        distance= std::numeric_limits<double>::max();
+        obj =nullptr;
+        m=nullptr;
+    }
+    */
+    
     // TODO find ray triangle intersection
-
-
-
-
+    
+    //So, 已经写好了吗？？
+    inter.happened = true;
+    inter.coords = ray(t_tmp);
+    inter.normal = this->normal;
+    inter.distance = t_tmp;
+    inter.obj = this;
+    inter.m = this->m;
     return inter;
 }
 

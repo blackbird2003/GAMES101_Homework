@@ -4,6 +4,8 @@
 
 #include <cstring>
 
+#define eps  1e-8
+
 bool rayTriangleIntersect(const Vector3f& v0, const Vector3f& v1, const Vector3f& v2, const Vector3f& orig,
                           const Vector3f& dir, float& tnear, float& u, float& v)
 {
@@ -11,6 +13,22 @@ bool rayTriangleIntersect(const Vector3f& v0, const Vector3f& v1, const Vector3f
     // that's specified bt v0, v1 and v2 intersects with the ray (whose
     // origin is *orig* and direction is *dir*)
     // Also don't forget to update tnear, u and v.
+    
+    //Moller Trumble Algorithm
+    //o + td = (1-b1-b2)p0 + b1p1 + b2p2
+    //t , b1, b2, 1 - b1 - b2 > 0
+    auto e1 = v1 - v0, e2 = v2 - v0, s = orig - v0, s1 = crossProduct(dir, e2), s2 = crossProduct(s, e1);
+    auto denom = dotProduct(s1, e1);
+    float t = dotProduct(s2, e2) / denom;
+    float b1 = dotProduct(s1, s) / denom;
+    float b2 = dotProduct(s2, dir) / denom;
+
+    if (t > -eps && b1 > -eps && b2 > -eps && 1 - b1 - b2 > -eps) {
+        //Also don't forget to update tnear, u and v.
+        tnear = t; u = b1; v = b2;
+        return true;
+    }
+
     return false;
 }
 
