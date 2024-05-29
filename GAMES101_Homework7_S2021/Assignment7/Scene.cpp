@@ -4,7 +4,7 @@
 
 #include "Scene.hpp"
 
-#define eps 1e-6
+#define eps 1e-4
 
 void Scene::buildBVH() {
     printf(" - Generating BVH...\n\n");
@@ -85,8 +85,7 @@ Vector3f Scene::castRay(const Ray &ray, int depth) const
     */
 
     Vector3f L_dir(0, 0, 0), L_indir(0, 0, 0);
-
-    //ray wo is to p, now find p and see if already hit light
+    //ray wo is screen to p, now find p and see if already hit light
     Ray wo = ray;
     Intersection p_inter = this->intersect(wo);
     //if hit nothing
@@ -94,7 +93,7 @@ Vector3f Scene::castRay(const Ray &ray, int depth) const
     //if hit light source
     if (p_inter.m->hasEmission()) return p_inter.m->getEmission();
 
-    //otherwise, it hit a object, continue
+    //otherwise, it hit a object
 
     //sampleLight(inter , pdf_light)
     //uniformly sample x from all LIGHTS and get its pdf
@@ -102,14 +101,14 @@ Vector3f Scene::castRay(const Ray &ray, int depth) const
     sampleLight(x_inter, x_pdf);
 
     //Get x, ws, Nx, emit from inter 
-    //ws is from p to x, Np is at p, Nx is at x
+    //ws is from p to x(light), Np is at p, Nx is at x(light)
     Vector3f p = p_inter.coords;
     Vector3f x = x_inter.coords;
     Vector3f Np = p_inter.normal;
     Vector3f Nx = x_inter.normal;
     Vector3f emit = x_inter.emit;    
 
-    //Shoot a ray (ws) from p to x 
+    //Shoot a ray (ws) from p to x(light) 
     Vector3f ws_dir = (x - p).normalized();
     Ray ws(p, ws_dir);
     Intersection ws_inter = this->intersect(ws);
@@ -121,18 +120,17 @@ Vector3f Scene::castRay(const Ray &ray, int depth) const
 
     //calc length of p - x and ws_inter to see if it is blocked
     float px_dis = (x - p).norm(), ws_dis = ws_inter.distance;
-    if (px_dis - ws_dis > eps) {
+    if (px_dis - ws_dis < 0.001) {
         L_dir = emit 
         * p_inter.m->eval(wo.direction, ws.direction, Np)
         * dotProduct(ws.direction, Np)      //all vectors were nomorlized
         * dotProduct(-ws.direction, Nx)     //so dot product is cosine
-        / (ws_dis * ws_dis)
+        / pow(px_dis, 2)
         / x_pdf;
     } // else L_dir = 0; no need
-
-
-    //Now calculate L_indir
-    //Test Russian Roulette with probability RussianRoulette
+    
+    // Now calculate L_indir
+    // Test Russian Roulette with probability RussianRoulette
     float P_rand = get_random_float();
     if (P_rand < RussianRoulette) {
         //wi = sample(wo, N)

@@ -77,6 +77,10 @@ Vector.hpp
 /home/vv123/GAMES101_Homework_S2021/GAMES101_Homework7_S2021/Assignment7/Renderer.cpp
 fstream
 -
+thread
+-
+mutex
+-
 Scene.hpp
 /home/vv123/GAMES101_Homework_S2021/GAMES101_Homework7_S2021/Assignment7/Scene.hpp
 Renderer.hpp

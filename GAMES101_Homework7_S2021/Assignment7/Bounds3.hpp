@@ -9,6 +9,8 @@
 #include <limits>
 #include <array>
 
+#define eps 1e-6
+
 class Bounds3
 {
   public:
@@ -110,26 +112,29 @@ inline bool Bounds3::IntersectP(const Ray& ray, const Vector3f& invDir,
    // if exist p = o + td
    // t = (p - o) / d
    // for 3 dimension
-   float tMin_x = (this->pMin.x - ray.origin.x) * invDir[0];
-   float tMax_x = (this->pMax.x - ray.origin.x) * invDir[0];
-   if (!dirIsNeg[0]) std::swap(tMin_x, tMax_x);
+    float tMin_x = (this->pMin.x - ray.origin.x) * invDir[0];
+    float tMax_x = (this->pMax.x - ray.origin.x) * invDir[0];
+    
 
-   float tMin_y = (this->pMin.y - ray.origin.y) * invDir[1];
-   float tMax_y = (this->pMax.y - ray.origin.y) * invDir[1];
-   if (!dirIsNeg[1]) std::swap(tMin_y, tMax_y);
+    float tMin_y = (this->pMin.y - ray.origin.y) * invDir[1];
+    float tMax_y = (this->pMax.y - ray.origin.y) * invDir[1];
+    
 
-   float tMin_z = (this->pMin.z - ray.origin.z) * invDir[2];
-   float tMax_z = (this->pMax.z - ray.origin.z) * invDir[2];
-   if (!dirIsNeg[2]) std::swap(tMin_z, tMax_z);
+    float tMin_z = (this->pMin.z - ray.origin.z) * invDir[2];
+    float tMax_z = (this->pMax.z - ray.origin.z) * invDir[2];
+   
 
 
+    if (!dirIsNeg[0]) std::swap(tMin_x, tMax_x);
+    if (!dirIsNeg[1]) std::swap(tMin_y, tMax_y);
+    if (!dirIsNeg[2]) std::swap(tMin_z, tMax_z);
 
     double t_enter, t_exit;
 
     t_enter = std::max(tMin_x, std::min(tMin_y, tMin_z));
     t_exit = std::min(tMax_x, std::max(tMax_y, tMax_z));
 
-    return t_enter < t_exit && t_exit >= 0;
+    return t_enter <= t_exit && t_exit >= 0;
 
 }
 
